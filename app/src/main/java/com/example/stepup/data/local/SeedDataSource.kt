@@ -1,3 +1,19 @@
 package com.example.stepup.data.local
 
-// TODO: Fuente de datos local para la carga de tareas iniciales desde JSON
+import android.content.res.AssetManager
+import com.example.stepup.data.model.Task
+
+class SeedDataSource(
+    private val assets: AssetManager,
+    private val codec: TaskJsonCodec
+) {
+
+    fun loadTasks(): List<Task> {
+        val json = assets.open("tasks_seed.json")
+            .bufferedReader()
+            .use { it.readText() }
+
+        return codec.decode(json)
+    }
+}
+

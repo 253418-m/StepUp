@@ -1,1 +1,57 @@
-[]
+[
+  {
+    "id": "seed-001",
+    "title": "Repasar Kotlin",
+    "category": "Estudio",
+    "priority": 2,
+    "effort": 2,
+    "estimatedMinutes": 30,
+    "isCompleted": false
+  },
+  {
+    "id": "seed-002",
+    "title": "Resolver ejercicios",
+    "category": "Estudio",
+    "priority": 3,
+    "effort": 3,
+    "estimatedMinutes": 60,
+    "isCompleted": false
+  },
+  {
+    "id": "seed-003",
+    "title": "Preparar exposición",
+    "category": "Estudio",
+    "priority": 3,
+    "effort": 2,
+    "estimatedMinutes": 45,
+    "isCompleted": false
+  },
+  {
+    "id": "seed-004",
+    "title": "Ordenar escritorio",
+    "category": "Personal",
+    "priority": 1,
+    "effort": 1,
+    "estimatedMinutes": 15,
+    "isCompleted": false
+  },
+  {
+    "id": "seed-005",
+    "title": "Leer 20 minutos",
+    "category": "Personal",
+    "priority": 2,
+    "effort": 1,
+    "estimatedMinutes": 20,
+    "isCompleted": false
+  },
+  {
+    "id": "seed-006",
+    "title": "Organizar habitación",
+    "category": "Hogar",
+    "priority": 2,
+    "effort": 2,
+    "estimatedMinutes": 40,
+    "isCompleted": false
+  }
+]
+

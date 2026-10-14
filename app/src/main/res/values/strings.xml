@@ -1,3 +1,19 @@
 <resources>
+
     <string name="app_name">StepUp</string>
+
+    <string name="my_tasks">Mis tareas</string>
+
+    <string name="completed_summary">
+        Completadas: %1$d | Pendientes: %2$d
+    </string>
+
+    <string name="progress_percentage">
+        Progreso: %1$d%%
+    </string>
+
+    <string name="task_details">
+        %1$s · Prioridad %2$d · Esfuerzo %3$d · %4$d min
+    </string>
+
 </resources>
