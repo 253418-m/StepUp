@@ -11,7 +11,6 @@ import com.example.stepup.presentation.viewmodel.TaskViewModel
 
 @Composable
 fun StepUpApp() {
-
     val application =
         LocalContext.current.applicationContext
                 as StepUpApplication
@@ -25,6 +24,12 @@ fun StepUpApp() {
 
     TasksScreen(
         uiState = uiState,
-        onToggleTask = viewModel::toggleTask
+        onToggleTask = viewModel::toggleTask,
+        onStatusFilterChange = viewModel::setStatusFilter,
+        onCategoryFilterChange = viewModel::setCategoryFilter,
+        onDeleteTask = viewModel::deleteTask,
+        onAddTask = viewModel::startNewTask,
+        onEditTask = viewModel::startEditingTask,
+        onClearError = viewModel::clearError
     )
 }

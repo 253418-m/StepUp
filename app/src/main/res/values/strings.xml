@@ -1,19 +1,54 @@
 <resources>
-
     <string name="app_name">StepUp</string>
-
     <string name="my_tasks">Mis tareas</string>
+    <string name="my_progress">Mi progreso</string>
 
-    <string name="completed_summary">
-        Completadas: %1$d | Pendientes: %2$d
-    </string>
+    <string name="level_number">Nivel %1$d</string>
+    <string name="level_beginner">Aprendiz</string>
+    <string name="level_constant">Constante</string>
+    <string name="level_expert">Experto</string>
+    <string name="xp_in_level">%1$d / 100 XP</string>
+    <string name="xp_until_next_level">¡A %1$d XP del Nivel %2$d!</string>
+    <string name="completed_tasks_count">%1$d tareas completadas</string>
+    <string name="total_tasks">%1$d totales</string>
 
-    <string name="progress_percentage">
-        Progreso: %1$d%%
-    </string>
+    <string name="filter_all">Todas</string>
+    <string name="filter_pending">Pendientes</string>
+    <string name="filter_completed">Completadas</string>
 
-    <string name="task_details">
-        %1$s · Prioridad %2$d · Esfuerzo %3$d · %4$d min
-    </string>
+    <string name="category_study">Estudio</string>
+    <string name="category_personal">Personal</string>
+    <string name="category_home">Hogar</string>
 
+    <string name="priority_low">Prioridad baja</string>
+    <string name="priority_medium">Prioridad media</string>
+    <string name="priority_high">¡Prioridad alta</string>
+
+    <string name="effort_low">Esfuerzo bajo</string>
+    <string name="effort_medium">Esfuerzo medio</string>
+    <string name="effort_high">Esfuerzo alto</string>
+
+    <string name="duration_minutes">%1$d min</string>
+
+    <string name="edit_task">Editar tarea</string>
+    <string name="delete_task">Eliminar tarea</string>
+    <string name="add_task">Nueva tarea</string>
+
+    <string name="delete_dialog_title">¿Eliminar esta tarea?</string>
+    <string name="delete_dialog_message">La tarea «%1$s» se eliminará definitivamente.</string>
+    <string name="delete_confirm">Eliminar</string>
+    <string name="cancel">Cancelar</string>
+
+    <string name="no_matching_tasks">No hay tareas que coincidan con los filtros.</string>
+    <string name="generic_error">No se pudo completar la operación.</string>
+
+    <string name="add_screen_pending">El formulario Nueva tarea se conectará en el siguiente avance.</string>
+    <string name="edit_screen_pending">El formulario Editar tarea se conectará en el siguiente avance.</string>
+    <string name="progress_screen_pending">La pantalla Mi progreso se conectará en el siguiente avance.</string>
+
+    <!-- Recursos conservados por compatibilidad -->
+    <string name="completed_summary">Completadas: %1$d | Pendientes: %2$d</string>
+    <string name="progress_percentage">Progreso: %1$d%%</string>
+    <string name="task_details">%1$s · Prioridad %2$d · Esfuerzo %3$d · %4$d min</string>
 </resources>
+
