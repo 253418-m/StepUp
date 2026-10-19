@@ -15,33 +15,26 @@
     <string name="filter_all">Todas</string>
     <string name="filter_pending">Pendientes</string>
     <string name="filter_completed">Completadas</string>
-
     <string name="category_study">Estudio</string>
     <string name="category_personal">Personal</string>
     <string name="category_home">Hogar</string>
-
     <string name="priority_low">Prioridad baja</string>
     <string name="priority_medium">Prioridad media</string>
-    <string name="priority_high">¡Prioridad alta</string>
-
+    <string name="priority_high">Prioridad alta</string>
     <string name="effort_low">Esfuerzo bajo</string>
     <string name="effort_medium">Esfuerzo medio</string>
     <string name="effort_high">Esfuerzo alto</string>
-
     <string name="duration_minutes">%1$d min</string>
 
     <string name="edit_task">Editar tarea</string>
     <string name="delete_task">Eliminar tarea</string>
     <string name="add_task">Nueva tarea</string>
-
     <string name="delete_dialog_title">¿Eliminar esta tarea?</string>
     <string name="delete_dialog_message">La tarea «%1$s» se eliminará definitivamente.</string>
     <string name="delete_confirm">Eliminar</string>
     <string name="cancel">Cancelar</string>
-
     <string name="no_matching_tasks">No hay tareas que coincidan con los filtros.</string>
     <string name="generic_error">No se pudo completar la operación.</string>
-
     <string name="add_screen_pending">El formulario Nueva tarea se conectará en el siguiente avance.</string>
     <string name="edit_screen_pending">El formulario Editar tarea se conectará en el siguiente avance.</string>
     <string name="progress_screen_pending">La pantalla Mi progreso se conectará en el siguiente avance.</string>
@@ -50,5 +43,34 @@
     <string name="completed_summary">Completadas: %1$d | Pendientes: %2$d</string>
     <string name="progress_percentage">Progreso: %1$d%%</string>
     <string name="task_details">%1$s · Prioridad %2$d · Esfuerzo %3$d · %4$d min</string>
+
+    <!-- Formulario de nueva tarea / editar tarea -->
+    <string name="back">Volver</string>
+    <string name="form_details">DETALLES DE LA TAREA</string>
+    <string name="form_m3">Formulario M3</string>
+    <string name="task_name">Nombre de la tarea</string>
+    <string name="task_name_hint">Escribe el nombre de la tarea</string>
+    <string name="task_name_rule">Mínimo 3 caracteres</string>
+    <string name="valid_task_name">Nombre válido (mínimo 3 caracteres)</string>
+    <string name="error_required_title">El nombre es obligatorio.</string>
+    <string name="error_short_title">El nombre debe tener al menos 3 caracteres.</string>
+    <string name="error_long_title">El nombre no puede superar los 60 caracteres.</string>
+    <string name="category_label">Categoría</string>
+    <string name="priority_label">Prioridad</string>
+    <string name="high_urgency">Alta urgencia</string>
+    <string name="low">Baja</string>
+    <string name="medium">Media</string>
+    <string name="high">Alta</string>
+    <string name="high_plain">Alto</string>
+    <string name="effort_label">Nivel de esfuerzo (determina XP)</string>
+    <string name="effort_xp_bonus">+%1$d XP</string>
+    <string name="estimated_duration">Duración estimada (minutos)</string>
+    <string name="duration_hint">45</string>
+    <string name="minutes_abbreviation">min</string>
+    <string name="duration_rule">Tiempo estimado en minutos (mayor a 0)</string>
+    <string name="error_invalid_duration">Ingresa una duración válida mayor a 0.</string>
+    <string name="save_task">Guardar tarea</string>
+    <string name="save_changes">Guardar cambios</string>
 </resources>
+
 

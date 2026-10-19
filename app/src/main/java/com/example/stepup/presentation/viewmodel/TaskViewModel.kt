@@ -1,4 +1,3 @@
-
 package com.example.stepup.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
@@ -28,21 +27,16 @@ class TaskViewModel(
     val uiState: StateFlow<TaskUiState> = _uiState.asStateFlow()
 
     private val _formUiState = MutableStateFlow(TaskFormUiState())
-    val formUiState: StateFlow<TaskFormUiState> =
-        _formUiState.asStateFlow()
+    val formUiState: StateFlow<TaskFormUiState> = _formUiState.asStateFlow()
 
     init {
         observeTasks()
     }
 
-    // Observar las tareas del repositorio
-
     private fun observeTasks() {
         viewModelScope.launch {
             repository.tasks
-                .catch {
-                    showError()
-                }
+                .catch { showError() }
                 .collect { tasks ->
                     _uiState.update { current ->
                         buildUiState(
@@ -55,24 +49,18 @@ class TaskViewModel(
         }
     }
 
-    // Completar o desmarcar una tarea
-
     fun toggleTask(taskId: String) {
         val task = _uiState.value.tasks
             .firstOrNull { it.id == taskId } ?: return
 
         viewModelScope.launch {
             try {
-                repository.updateTask(
-                    task.copy(isCompleted = !task.isCompleted)
-                )
+                repository.updateTask(task.copy(isCompleted = !task.isCompleted))
             } catch (_: Exception) {
                 showError()
             }
         }
     }
-
-    // Eliminar una tarea
 
     fun deleteTask(taskId: String) {
         viewModelScope.launch {
@@ -84,35 +72,21 @@ class TaskViewModel(
         }
     }
 
-    // Sirve para los filtros de tareas
-
     fun setStatusFilter(filter: TaskStatusFilter) {
         _uiState.update { current ->
-            buildUiState(
-                tasks = current.tasks,
-                statusFilter = filter,
-                categoryFilter = current.categoryFilter
-            )
+            buildUiState(current.tasks, filter, current.categoryFilter)
         }
     }
 
     fun setCategoryFilter(category: String?) {
         _uiState.update { current ->
-            buildUiState(
-                tasks = current.tasks,
-                statusFilter = current.statusFilter,
-                categoryFilter = category
-            )
+            buildUiState(current.tasks, current.statusFilter, category)
         }
     }
-
-    // Preparar formulario para crear tarea
 
     fun startNewTask() {
         _formUiState.value = TaskFormUiState()
     }
-
-    // Preparar formulario para editar tarea
 
     fun startEditingTask(taskId: String) {
         val task = _uiState.value.tasks
@@ -124,53 +98,37 @@ class TaskViewModel(
             category = task.category,
             priority = task.priority,
             effort = task.effort,
-            estimatedMinutesInput =
-                task.estimatedMinutes.toString()
+            estimatedMinutesInput = task.estimatedMinutes.toString()
         )
     }
 
-    // Actualizar campos del formulario
-
     fun updateTitle(value: String) {
-        _formUiState.update {
-            it.copy(title = value, titleError = null)
-        }
+        _formUiState.update { it.copy(title = value, titleError = null) }
     }
 
     fun updateCategory(value: String) {
         if (value in listOf("Estudio", "Personal", "Hogar")) {
-            _formUiState.update {
-                it.copy(category = value)
-            }
+            _formUiState.update { it.copy(category = value) }
         }
     }
 
     fun updatePriority(value: Int) {
         if (value in 1..3) {
-            _formUiState.update {
-                it.copy(priority = value)
-            }
+            _formUiState.update { it.copy(priority = value) }
         }
     }
 
     fun updateEffort(value: Int) {
         if (value in 1..3) {
-            _formUiState.update {
-                it.copy(effort = value)
-            }
+            _formUiState.update { it.copy(effort = value) }
         }
     }
 
     fun updateEstimatedMinutes(value: String) {
         _formUiState.update {
-            it.copy(
-                estimatedMinutesInput = value,
-                durationError = null
-            )
+            it.copy(estimatedMinutesInput = value, durationError = null)
         }
     }
-
-    // Validar y guardar una tarea
 
     fun saveTask() {
         val form = _formUiState.value
@@ -181,58 +139,50 @@ class TaskViewModel(
 
         val titleError = when {
             title.isEmpty() -> FormError.REQUIRED_TITLE
+            title.length < 3 -> FormError.TITLE_TOO_SHORT
             title.length > 60 -> FormError.TITLE_TOO_LONG
             else -> null
         }
 
-        val durationError =
-            if (duration == null || duration !in 5..180) {
-                FormError.INVALID_DURATION
-            } else {
-                null
-            }
+        val durationError = if (duration == null || duration <= 0) {
+            FormError.INVALID_DURATION
+        } else {
+            null
+        }
 
         if (titleError != null || durationError != null) {
             _formUiState.update {
-                it.copy(
-                    titleError = titleError,
-                    durationError = durationError
-                )
+                it.copy(titleError = titleError, durationError = durationError)
             }
             return
         }
 
         val validDuration = requireNotNull(duration)
-
-        _formUiState.update {
-            it.copy(isSaving = true)
-        }
+        _formUiState.update { it.copy(isSaving = true) }
 
         viewModelScope.launch {
             try {
                 val editingId = form.editingTaskId
 
                 if (editingId == null) {
-                    val newTask = Task(
-                        id = UUID.randomUUID().toString(),
-                        title = title,
-                        category = form.category,
-                        priority = form.priority,
-                        effort = form.effort,
-                        estimatedMinutes = validDuration,
-                        isCompleted = false
+                    repository.addTask(
+                        Task(
+                            id = UUID.randomUUID().toString(),
+                            title = title,
+                            category = form.category,
+                            priority = form.priority,
+                            effort = form.effort,
+                            estimatedMinutes = validDuration,
+                            isCompleted = false
+                        )
                     )
-
-                    repository.addTask(newTask)
                 } else {
                     val existingTask = _uiState.value.tasks
                         .firstOrNull { it.id == editingId }
 
                     if (existingTask == null) {
                         showError()
-                        _formUiState.update {
-                            it.copy(isSaving = false)
-                        }
+                        _formUiState.update { it.copy(isSaving = false) }
                         return@launch
                     }
 
@@ -248,15 +198,10 @@ class TaskViewModel(
                 }
 
                 _formUiState.update {
-                    it.copy(
-                        isSaving = false,
-                        savedSuccessfully = true
-                    )
+                    it.copy(isSaving = false, savedSuccessfully = true)
                 }
             } catch (_: Exception) {
-                _formUiState.update {
-                    it.copy(isSaving = false)
-                }
+                _formUiState.update { it.copy(isSaving = false) }
                 showError()
             }
         }
@@ -266,15 +211,14 @@ class TaskViewModel(
         _uiState.update {
             it.copy(
                 hasError = false,
-                screenStatus = when {
-                    it.totalTasks == 0 -> ScreenStatus.EMPTY
-                    else -> ScreenStatus.CONTENT
+                screenStatus = if (it.totalTasks == 0) {
+                    ScreenStatus.EMPTY
+                } else {
+                    ScreenStatus.CONTENT
                 }
             )
         }
     }
-
-    // 9. Calcular XP de una tarea
 
     private fun calculateTaskXp(task: Task): Int {
         if (!task.isCompleted) return 0
@@ -285,56 +229,35 @@ class TaskViewModel(
             else -> 10
         }
 
-        return 10 +
-                (5 * task.priority) +
-                (3 * task.effort) +
-                durationBonus
+        return 10 + 5 * task.priority + 3 * task.effort + durationBonus
     }
-
-    // 10. Construir el estado completo de la interfaz
 
     private fun buildUiState(
         tasks: List<Task>,
         statusFilter: TaskStatusFilter,
         categoryFilter: String?
     ): TaskUiState {
-
         val completed = tasks.count { it.isCompleted }
         val pending = tasks.size - completed
-
         val totalXp = tasks.sumOf { calculateTaskXp(it) }
-
         val level = 1 + totalXp / 100
         val xpInLevel = totalXp % 100
-
-        val percentage = if (tasks.isEmpty()) {
-            0
-        } else {
-            completed * 100 / tasks.size
-        }
+        val percentage = if (tasks.isEmpty()) 0 else completed * 100 / tasks.size
 
         val visibleTasks = tasks.filter { task ->
-
             val matchesStatus = when (statusFilter) {
                 TaskStatusFilter.ALL -> true
                 TaskStatusFilter.PENDING -> !task.isCompleted
                 TaskStatusFilter.COMPLETED -> task.isCompleted
             }
-
-            val matchesCategory =
-                categoryFilter == null ||
-                        task.category == categoryFilter
-
+            val matchesCategory = categoryFilter == null || task.category == categoryFilter
             matchesStatus && matchesCategory
         }
 
-        val completedByCategory = tasks
-            .filter { it.isCompleted }
+        val completedByCategory = tasks.filter { it.isCompleted }
             .groupingBy { it.category }
             .eachCount()
-
-        val maxCategoryCompleted =
-            completedByCategory.values.maxOrNull() ?: 0
+        val maxCategoryCompleted = completedByCategory.values.maxOrNull() ?: 0
 
         val achievements = listOf(
             AchievementUiModel(
@@ -358,11 +281,7 @@ class TaskViewModel(
         )
 
         return TaskUiState(
-            screenStatus = if (tasks.isEmpty()) {
-                ScreenStatus.EMPTY
-            } else {
-                ScreenStatus.CONTENT
-            },
+            screenStatus = if (tasks.isEmpty()) ScreenStatus.EMPTY else ScreenStatus.CONTENT,
             tasks = tasks,
             visibleTasks = visibleTasks,
             statusFilter = statusFilter,
@@ -380,10 +299,8 @@ class TaskViewModel(
 
     private fun showError() {
         _uiState.update {
-            it.copy(
-                hasError = true,
-                screenStatus = ScreenStatus.ERROR
-            )
+            it.copy(hasError = true, screenStatus = ScreenStatus.ERROR)
         }
     }
 }
+

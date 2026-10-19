@@ -80,19 +80,10 @@ fun TasksScreen(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    var taskIdToDelete by rememberSaveable { mutableStateOf<String?>(null) }
 
-    var taskIdToDelete by rememberSaveable {
-        mutableStateOf<String?>(null)
-    }
-
-    val addPendingMessage =
-        stringResource(R.string.add_screen_pending)
-    val editPendingMessage =
-        stringResource(R.string.edit_screen_pending)
-    val progressPendingMessage =
-        stringResource(R.string.progress_screen_pending)
-    val errorMessage =
-        stringResource(R.string.generic_error)
+    val progressPendingMessage = stringResource(R.string.progress_screen_pending)
+    val errorMessage = stringResource(R.string.generic_error)
 
     LaunchedEffect(uiState.hasError) {
         if (uiState.hasError) {
@@ -103,308 +94,164 @@ fun TasksScreen(
 
     Scaffold(
         containerColor = StepUpBackground,
-        topBar = {
-            StepUpHeader()
-        },
+        topBar = { StepUpHeader() },
         bottomBar = {
             StepUpBottomBar(
                 onProgressClick = {
-                    scope.launch {
-                        snackbarHostState.showSnackbar(
-                            progressPendingMessage
-                        )
-                    }
+                    scope.launch { snackbarHostState.showSnackbar(progressPendingMessage) }
                 }
             )
         },
-        snackbarHost = {
-            SnackbarHost(snackbarHostState)
-        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {
-                    onAddTask()
-
-                    scope.launch {
-                        snackbarHostState.showSnackbar(
-                            addPendingMessage
-                        )
-                    }
-                },
+                onClick = onAddTask,
                 containerColor = StepUpDarkRed,
                 contentColor = Color.White,
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(
-                        R.string.add_task
-                    ),
+                    contentDescription = stringResource(R.string.add_task),
                     modifier = Modifier.size(29.dp)
                 )
             }
         }
     ) { innerPadding ->
-
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                top = 16.dp,
-                bottom = 18.dp
-            ),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 18.dp),
             verticalArrangement = Arrangement.spacedBy(9.dp)
         ) {
-
-            // Tarjeta de nivel y experiencia
             item {
                 ProgressSummary(uiState)
             }
-
-            // Titulo y cantidad total de tareas
             item {
                 Spacer(Modifier.height(4.dp))
-
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement =
-                        Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
                         text = stringResource(R.string.my_tasks),
-                        color = MaterialTheme.colorScheme
-                            .onBackground,
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 23.sp,
                         fontWeight = FontWeight.SemiBold
                     )
-
-                    Surface(
-                        color = StepUpChipGray,
-                        shape = RoundedCornerShape(50)
-                    ) {
+                    Surface(color = StepUpChipGray, shape = RoundedCornerShape(50)) {
                         Text(
-                            text = stringResource(
-                                R.string.total_tasks,
-                                uiState.totalTasks
-                            ),
-                            modifier = Modifier.padding(
-                                horizontal = 10.dp,
-                                vertical = 4.dp
-                            ),
+                            text = stringResource(R.string.total_tasks, uiState.totalTasks),
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
                             fontSize = 11.sp,
                             color = StepUpMutedText
                         )
                     }
                 }
             }
-
-            // Filtros por estado
             item {
-                LazyRow(
-                    horizontalArrangement =
-                        Arrangement.spacedBy(6.dp)
-                ) {
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     item {
                         StepUpFilterButton(
-                            label = stringResource(
-                                R.string.filter_all
-                            ),
+                            label = stringResource(R.string.filter_all),
                             icon = Icons.Default.List,
-                            selected = uiState.statusFilter ==
-                                    TaskStatusFilter.ALL,
-                            onClick = {
-                                onStatusFilterChange(
-                                    TaskStatusFilter.ALL
-                                )
-                            }
+                            selected = uiState.statusFilter == TaskStatusFilter.ALL,
+                            onClick = { onStatusFilterChange(TaskStatusFilter.ALL) }
                         )
                     }
-
                     item {
                         StepUpFilterButton(
-                            label = stringResource(
-                                R.string.filter_pending
-                            ),
+                            label = stringResource(R.string.filter_pending),
                             icon = Icons.Default.Schedule,
-                            selected = uiState.statusFilter ==
-                                    TaskStatusFilter.PENDING,
-                            onClick = {
-                                onStatusFilterChange(
-                                    TaskStatusFilter.PENDING
-                                )
-                            }
+                            selected = uiState.statusFilter == TaskStatusFilter.PENDING,
+                            onClick = { onStatusFilterChange(TaskStatusFilter.PENDING) }
                         )
                     }
-
                     item {
                         StepUpFilterButton(
-                            label = stringResource(
-                                R.string.filter_completed
-                            ),
+                            label = stringResource(R.string.filter_completed),
                             icon = Icons.Default.CheckCircle,
-                            selected = uiState.statusFilter ==
-                                    TaskStatusFilter.COMPLETED,
-                            onClick = {
-                                onStatusFilterChange(
-                                    TaskStatusFilter.COMPLETED
-                                )
-                            }
+                            selected = uiState.statusFilter == TaskStatusFilter.COMPLETED,
+                            onClick = { onStatusFilterChange(TaskStatusFilter.COMPLETED) }
                         )
                     }
                 }
             }
-
-            // Filtros por categoria
             item {
-                LazyRow(
-                    horizontalArrangement =
-                        Arrangement.spacedBy(5.dp)
-                ) {
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
                     item {
                         StepUpCategoryButton(
-                            label = stringResource(
-                                R.string.filter_all
-                            ),
-                            selected =
-                                uiState.categoryFilter == null,
-                            onClick = {
-                                onCategoryFilterChange(null)
-                            }
+                            label = stringResource(R.string.filter_all),
+                            selected = uiState.categoryFilter == null,
+                            onClick = { onCategoryFilterChange(null) }
                         )
                     }
-
                     item {
                         StepUpCategoryButton(
-                            label = stringResource(
-                                R.string.category_study
-                            ),
+                            label = stringResource(R.string.category_study),
                             icon = Icons.Default.School,
-                            selected =
-                                uiState.categoryFilter == "Estudio",
-                            onClick = {
-                                onCategoryFilterChange("Estudio")
-                            }
+                            selected = uiState.categoryFilter == "Estudio",
+                            onClick = { onCategoryFilterChange("Estudio") }
                         )
                     }
-
                     item {
                         StepUpCategoryButton(
-                            label = stringResource(
-                                R.string.category_personal
-                            ),
+                            label = stringResource(R.string.category_personal),
                             icon = Icons.Default.Person,
-                            selected =
-                                uiState.categoryFilter == "Personal",
-                            onClick = {
-                                onCategoryFilterChange("Personal")
-                            }
+                            selected = uiState.categoryFilter == "Personal",
+                            onClick = { onCategoryFilterChange("Personal") }
                         )
                     }
-
                     item {
                         StepUpCategoryButton(
-                            label = stringResource(
-                                R.string.category_home
-                            ),
+                            label = stringResource(R.string.category_home),
                             icon = Icons.Default.Home,
-                            selected =
-                                uiState.categoryFilter == "Hogar",
-                            onClick = {
-                                onCategoryFilterChange("Hogar")
-                            }
+                            selected = uiState.categoryFilter == "Hogar",
+                            onClick = { onCategoryFilterChange("Hogar") }
                         )
                     }
                 }
             }
 
-            // Lista filtrada de tareas
             if (uiState.visibleTasks.isEmpty()) {
                 item {
                     Text(
-                        text = stringResource(
-                            R.string.no_matching_tasks
-                        ),
-                        modifier = Modifier.padding(
-                            vertical = 32.dp
-                        ),
+                        text = stringResource(R.string.no_matching_tasks),
+                        modifier = Modifier.padding(vertical = 32.dp),
                         color = StepUpMutedText
                     )
                 }
             } else {
-                items(
-                    items = uiState.visibleTasks,
-                    key = { it.id }
-                ) { task ->
-
+                items(items = uiState.visibleTasks, key = { it.id }) { task ->
                     TaskCard(
                         task = task,
-                        onToggleCompleted = {
-                            onToggleTask(task.id)
-                        },
-                        onEdit = {
-                            onEditTask(task.id)
-
-                            scope.launch {
-                                snackbarHostState.showSnackbar(
-                                    editPendingMessage
-                                )
-                            }
-                        },
-                        onDelete = {
-                            taskIdToDelete = task.id
-                        }
+                        onToggleCompleted = { onToggleTask(task.id) },
+                        onEdit = { onEditTask(task.id) },
+                        onDelete = { taskIdToDelete = task.id }
                     )
                 }
             }
         }
     }
 
-    // Dialogo de confirmacion antes de eliminar
-    val selectedTask = uiState.tasks.firstOrNull {
-        it.id == taskIdToDelete
-    }
-
+    val selectedTask = uiState.tasks.firstOrNull { it.id == taskIdToDelete }
     if (selectedTask != null) {
         AlertDialog(
-            onDismissRequest = {
-                taskIdToDelete = null
-            },
-            title = {
-                Text(
-                    stringResource(R.string.delete_dialog_title)
-                )
-            },
-            text = {
-                Text(
-                    stringResource(
-                        R.string.delete_dialog_message,
-                        selectedTask.title
-                    )
-                )
-            },
+            onDismissRequest = { taskIdToDelete = null },
+            title = { Text(stringResource(R.string.delete_dialog_title)) },
+            text = { Text(stringResource(R.string.delete_dialog_message, selectedTask.title)) },
             confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDeleteTask(selectedTask.id)
-                        taskIdToDelete = null
-                    }
-                ) {
-                    Text(
-                        stringResource(R.string.delete_confirm),
-                        color = StepUpDarkRed
-                    )
+                TextButton(onClick = {
+                    onDeleteTask(selectedTask.id)
+                    taskIdToDelete = null
+                }) {
+                    Text(stringResource(R.string.delete_confirm), color = StepUpDarkRed)
                 }
             },
             dismissButton = {
-                TextButton(
-                    onClick = {
-                        taskIdToDelete = null
-                    }
-                ) {
+                TextButton(onClick = { taskIdToDelete = null }) {
                     Text(stringResource(R.string.cancel))
                 }
             }
@@ -412,7 +259,6 @@ fun TasksScreen(
     }
 }
 
-// Encabezado rojo sin icono de usuario
 @Composable
 private fun StepUpHeader() {
     Row(
@@ -428,10 +274,7 @@ private fun StepUpHeader() {
         Box(
             modifier = Modifier
                 .size(36.dp)
-                .background(
-                    Color.White.copy(alpha = 0.14f),
-                    RoundedCornerShape(10.dp)
-                ),
+                .background(Color.White.copy(alpha = 0.14f), RoundedCornerShape(10.dp)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -441,17 +284,16 @@ private fun StepUpHeader() {
                 modifier = Modifier.size(23.dp)
             )
         }
-
         Text(
             text = stringResource(R.string.app_name),
             fontWeight = FontWeight.Bold,
             fontSize = 21.sp,
             color = Color.White
         )
+        // Sin icono de perfil: asi lo especifica el diseno.
     }
 }
 
-// Filtro: Todas, Pendientes, Completadas
 @Composable
 private fun StepUpFilterButton(
     label: String,
@@ -466,42 +308,25 @@ private fun StepUpFilterButton(
                 RoundedCornerShape(9.dp)
             )
             .clickable(onClick = onClick)
-            .padding(
-                horizontal = 11.dp,
-                vertical = 9.dp
-            ),
+            .padding(horizontal = 11.dp, vertical = 9.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
-            tint = if (selected) {
-                Color.White
-            } else {
-                StepUpMutedText
-            },
+            tint = if (selected) Color.White else StepUpMutedText,
             modifier = Modifier.size(15.dp)
         )
-
         Text(
             text = label,
-            color = if (selected) {
-                Color.White
-            } else {
-                StepUpMutedText
-            },
+            color = if (selected) Color.White else StepUpMutedText,
             fontSize = 12.sp,
-            fontWeight = if (selected) {
-                FontWeight.SemiBold
-            } else {
-                FontWeight.Normal
-            }
+            fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal
         )
     }
 }
 
-// Filtro: Todas, Estudio, Personal, Hogar
 @Composable
 private fun StepUpCategoryButton(
     label: String,
@@ -512,18 +337,11 @@ private fun StepUpCategoryButton(
     Row(
         modifier = Modifier
             .background(
-                if (selected) {
-                    StepUpPaleRed
-                } else {
-                    StepUpChipGray
-                },
+                if (selected) StepUpPaleRed else StepUpChipGray,
                 RoundedCornerShape(50)
             )
             .clickable(onClick = onClick)
-            .padding(
-                horizontal = 10.dp,
-                vertical = 7.dp
-            ),
+            .padding(horizontal = 10.dp, vertical = 7.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
@@ -531,41 +349,23 @@ private fun StepUpCategoryButton(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = if (selected) {
-                    StepUpDarkRed
-                } else {
-                    StepUpMutedText
-                },
+                tint = if (selected) StepUpDarkRed else StepUpMutedText,
                 modifier = Modifier.size(13.dp)
             )
         }
-
         Text(
             text = label,
-            color = if (selected) {
-                StepUpDarkRed
-            } else {
-                StepUpMutedText
-            },
+            color = if (selected) StepUpDarkRed else StepUpMutedText,
             fontSize = 11.sp,
-            fontWeight = if (selected) {
-                FontWeight.SemiBold
-            } else {
-                FontWeight.Normal
-            }
+            fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal
         )
     }
 }
 
-// Barra inferior de navegacion
 @Composable
-private fun StepUpBottomBar(
-    onProgressClick: () -> Unit
-) {
+private fun StepUpBottomBar(onProgressClick: () -> Unit) {
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .navigationBarsPadding(),
+        modifier = Modifier.fillMaxWidth().navigationBarsPadding(),
         color = Color.White,
         shadowElevation = 4.dp
     ) {
@@ -582,7 +382,6 @@ private fun StepUpBottomBar(
                 selected = true,
                 onClick = {}
             )
-
             StepUpBottomItem(
                 label = stringResource(R.string.my_progress),
                 icon = Icons.Default.EmojiEvents,
@@ -603,55 +402,33 @@ private fun StepUpBottomItem(
     Column(
         modifier = Modifier
             .clickable(onClick = onClick)
-            .padding(
-                horizontal = 20.dp,
-                vertical = 4.dp
-            ),
+            .padding(horizontal = 20.dp, vertical = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(3.dp)
     ) {
         Box(
             modifier = Modifier
                 .background(
-                    if (selected) {
-                        StepUpPaleRed
-                    } else {
-                        Color.Transparent
-                    },
+                    if (selected) StepUpPaleRed else Color.Transparent,
                     RoundedCornerShape(50)
                 )
-                .padding(
-                    horizontal = 18.dp,
-                    vertical = 4.dp
-                ),
+                .padding(horizontal = 18.dp, vertical = 4.dp),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
                 modifier = Modifier.size(22.dp),
-                tint = if (selected) {
-                    StepUpDarkRed
-                } else {
-                    StepUpMutedText
-                }
+                tint = if (selected) StepUpDarkRed else StepUpMutedText
             )
         }
-
         Text(
             text = label,
             fontSize = 12.sp,
-            color = if (selected) {
-                StepUpDarkRed
-            } else {
-                StepUpMutedText
-            },
-            fontWeight = if (selected) {
-                FontWeight.SemiBold
-            } else {
-                FontWeight.Medium
-            }
+            color = if (selected) StepUpDarkRed else StepUpMutedText,
+            fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium
         )
     }
 }
+
 
