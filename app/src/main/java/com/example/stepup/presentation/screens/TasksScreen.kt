@@ -3,18 +3,14 @@ package com.example.stepup.presentation.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -22,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Person
@@ -43,7 +38,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -57,6 +51,8 @@ import androidx.compose.ui.unit.sp
 import com.example.stepup.R
 import com.example.stepup.presentation.components.ProgressSummary
 import com.example.stepup.presentation.components.TaskCard
+import com.example.stepup.presentation.components.StepUpHeader
+import com.example.stepup.presentation.components.StepUpBottomBar
 import com.example.stepup.presentation.state.TaskStatusFilter
 import com.example.stepup.presentation.state.TaskUiState
 import com.example.stepup.ui.theme.StepUpBackground
@@ -64,8 +60,6 @@ import com.example.stepup.ui.theme.StepUpChipGray
 import com.example.stepup.ui.theme.StepUpDarkRed
 import com.example.stepup.ui.theme.StepUpMutedText
 import com.example.stepup.ui.theme.StepUpPaleRed
-import com.example.stepup.ui.theme.StepUpRed
-import kotlinx.coroutines.launch
 
 @Composable
 fun TasksScreen(
@@ -76,13 +70,12 @@ fun TasksScreen(
     onDeleteTask: (String) -> Unit,
     onAddTask: () -> Unit,
     onEditTask: (String) -> Unit,
+    onProgressClick: () -> Unit,
     onClearError: () -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
     var taskIdToDelete by rememberSaveable { mutableStateOf<String?>(null) }
 
-    val progressPendingMessage = stringResource(R.string.progress_screen_pending)
     val errorMessage = stringResource(R.string.generic_error)
 
     LaunchedEffect(uiState.hasError) {
@@ -97,9 +90,9 @@ fun TasksScreen(
         topBar = { StepUpHeader() },
         bottomBar = {
             StepUpBottomBar(
-                onProgressClick = {
-                    scope.launch { snackbarHostState.showSnackbar(progressPendingMessage) }
-                }
+                selectedProgress = false,
+                onTasksClick = {},
+                onProgressClick = onProgressClick
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -260,41 +253,6 @@ fun TasksScreen(
 }
 
 @Composable
-private fun StepUpHeader() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(StepUpRed)
-            .statusBarsPadding()
-            .height(62.dp)
-            .padding(horizontal = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .size(36.dp)
-                .background(Color.White.copy(alpha = 0.14f), RoundedCornerShape(10.dp)),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.CheckCircle,
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(23.dp)
-            )
-        }
-        Text(
-            text = stringResource(R.string.app_name),
-            fontWeight = FontWeight.Bold,
-            fontSize = 21.sp,
-            color = Color.White
-        )
-        // Sin icono de perfil: asi lo especifica el diseno.
-    }
-}
-
-@Composable
 private fun StepUpFilterButton(
     label: String,
     icon: ImageVector,
@@ -358,75 +316,6 @@ private fun StepUpCategoryButton(
             color = if (selected) StepUpDarkRed else StepUpMutedText,
             fontSize = 11.sp,
             fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal
-        )
-    }
-}
-
-@Composable
-private fun StepUpBottomBar(onProgressClick: () -> Unit) {
-    Surface(
-        modifier = Modifier.fillMaxWidth().navigationBarsPadding(),
-        color = Color.White,
-        shadowElevation = 4.dp
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(72.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            StepUpBottomItem(
-                label = stringResource(R.string.my_tasks),
-                icon = Icons.Default.List,
-                selected = true,
-                onClick = {}
-            )
-            StepUpBottomItem(
-                label = stringResource(R.string.my_progress),
-                icon = Icons.Default.EmojiEvents,
-                selected = false,
-                onClick = onProgressClick
-            )
-        }
-    }
-}
-
-@Composable
-private fun StepUpBottomItem(
-    label: String,
-    icon: ImageVector,
-    selected: Boolean,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .clickable(onClick = onClick)
-            .padding(horizontal = 20.dp, vertical = 4.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(3.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .background(
-                    if (selected) StepUpPaleRed else Color.Transparent,
-                    RoundedCornerShape(50)
-                )
-                .padding(horizontal = 18.dp, vertical = 4.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                modifier = Modifier.size(22.dp),
-                tint = if (selected) StepUpDarkRed else StepUpMutedText
-            )
-        }
-        Text(
-            text = label,
-            fontSize = 12.sp,
-            color = if (selected) StepUpDarkRed else StepUpMutedText,
-            fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium
         )
     }
 }

@@ -71,6 +71,29 @@
     <string name="error_invalid_duration">Ingresa una duración válida mayor a 0.</string>
     <string name="save_task">Guardar tarea</string>
     <string name="save_changes">Guardar cambios</string>
-</resources>
 
+    <!-- Pantalla Mi progreso: totales de todas las tareas actuales -->
+    <string name="progress_hero_subtitle">Cada tarea cuenta</string>
+    <string name="progress_badge_beginner">PRINCIPIANTE</string>
+    <string name="progress_badge_constant">CONSTANTE</string>
+    <string name="progress_badge_expert">EXPERTO</string>
+    <string name="progress_accumulated_xp">%1$d XP acumulados</string>
+    <string name="progress_xp_goal">Meta: 100 XP por nivel</string>
+    <string name="progress_task_summary">Resumen de tareas</string>
+    <string name="progress_total_period">Acumulado</string>
+    <string name="progress_total_tasks">Total de tareas</string>
+    <string name="progress_completion">Cumplimiento</string>
+    <string name="progress_percentage_value">%1$d%%</string>
+    <string name="progress_achievements_title">Mis logros</string>
+    <string name="progress_achievements_count">%1$d de %2$d conseguidos</string>
+    <string name="achievement_first">Primer paso</string>
+    <string name="achievement_first_description">Completar 1 tarea</string>
+    <string name="achievement_consistency">Constancia</string>
+    <string name="achievement_consistency_description">Completar 5 tareas (%1$d/%2$d)</string>
+    <string name="achievement_specialist">Especialista</string>
+    <string name="achievement_specialist_description">3 tareas de una misma categoría (%1$d/%2$d)</string>
+    <string name="achievement_unlocked">Conseguido</string>
+    <string name="achievement_locked">Bloqueado</string>
+    <string name="progress_motivation">¡Sigue así! Completa tareas para ganar XP según su prioridad, esfuerzo y duración, y desbloquear más logros.</string>
+</resources>
 
